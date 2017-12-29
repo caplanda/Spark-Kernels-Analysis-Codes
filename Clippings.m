@@ -382,3 +382,92 @@ imshow(losedges+lostest, loscolormaprange);
 %
 % fig2 = figure;
 % plot(
+
+
+% 
+% for v = 1:length(voltages)
+%     figure('Name',['Voltage = ', num2str(voltages(v)),' Volts'],'NumberTitle','off')
+%     
+%     lnspc = {'xr', '+r', 'or', 'xg', '+g', 'og', 'xb', '+b', 'ob'};
+%     for p = 1:length(pressures)
+%         i = 0;
+%         isovolt(v).isobar(p).Pressure = pressures(p);
+%         isovolt(v).isobar(p).LegendEntry = ['P=',num2str(pressures(p)),' bar'];
+%         for k = 1:size(Data,2)
+%             if Data(k).Pressure == pressures(p) && Data(k).Voltage == voltages(v)
+%                 i = i+1;
+%                 isovolt(v).isobar(p).Tmean(i) = Data(k).Tmean;
+%                 isovolt(v).isobar(p).Time(i) = Data(k).Time;
+%                 isovolt(v).isobar(p).Tpeak(i) = Data(k).Tpeak;
+%             end
+%         end
+%         subplot(2,2,1)
+%         plot(isovolt(v).isobar(p).Time,isovolt(v).isobar(p).Tmean,lnspc{p}); hold on
+%         title('Mean Temp over Time');
+%         xlabel('Time (ms)');
+%         ylabel('Temperature (K)');
+%         grid on
+%         subplot(2,2,2)
+%         plot(isovolt(v).isobar(p).Time,isovolt(v).isobar(p).Tpeak,lnspc{p}); hold on
+%         title('Peak Temp over Time');
+%         xlabel('Time (ms)');
+%         ylabel('Temperature (K)');
+%         grid on
+%     end
+%     
+%     lnspc = {'xr:', '+r:', 'or:', 'xg:', '+g:', 'og:', 'xb:', '+b:', 'ob:'};
+%     for p = 1:length(pressures)
+%         isovolt(v).isobar(p).TimeAvg = times;
+%         for t = 1:length(times)
+%             i = 0;
+%             for j = 1:length(isovolt(v).isobar(p).Time)
+%                 if isovolt(v).isobar(p).Time(j) == times(t) && ~isnan(isovolt(v).isobar(p).Tmean(j))
+%                     i = i+1;
+%                     TmeanVar(i) = isovolt(v).isobar(p).Tmean(j);
+%                     TpeakVar(i) = isovolt(v).isobar(p).Tpeak(j);
+%                 end
+%             end
+%             isovolt(v).isobar(p).TmeanAvg(t) = mean(TmeanVar);
+%             isovolt(v).isobar(p).TpeakAvg(t) = mean(TpeakVar);
+%             isovolt(v).isobar(p).NumKerns = length(TmeanVar);
+%          end
+%         subplot(2,2,3)
+%         plot(isovolt(v).isobar(p).TimeAvg, isovolt(v).isobar(p).TmeanAvg, lnspc{p}); hold on
+%         title('Average Mean Temp over Time');
+%         xlabel('Time (ms)');
+%         ylabel('Temperature (K)');
+%         grid on
+%         subplot(2,2,4)
+%         plot(isovolt(v).isobar(p).TimeAvg, isovolt(v).isobar(p).TpeakAvg, lnspc{p}); hold on
+%         title('Average Peak Temp over Time');
+%         xlabel('Time (ms)');
+%         ylabel('Temperature (K)');
+%         grid on
+%     end
+%     legend(isovolt(v).isobar.LegendEntry)
+% end
+% 
+% 
+% figure('Name',['Mean Temperature'],'NumberTitle','off')
+% 
+% for v = 1:length(voltages)
+%     for p = 1:length(pressures)
+%         subplot(1,3,v)
+%         plot(isovolt(v).isobar(p).TimeAvg, isovolt(v).isobar(p).TmeanAvg, lnspc{p}); hold on
+%         title(['Supply = ',num2str(voltages(v)),' V']);
+%         xlabel('Time (ms)');
+%         ylabel('Temperature (K)');
+%         grid on
+%         axis([0 6*0.68 700 1300]);
+%         xticks(0.68*[0 1 2 3 4 5 6]);
+%     end
+% end
+% legend(isovolt(v).isobar.LegendEntry)
+% 
+% 
+% 
+% clear v
+
+% for v = 1:length(voltages)
+%     figure('Name',['Voltage = ', num2str(voltages(v)),' Volts'],'NumberTitle','off')
+

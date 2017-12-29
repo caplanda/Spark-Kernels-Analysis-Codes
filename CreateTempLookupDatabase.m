@@ -11,6 +11,7 @@ clear; clc; close all; format compact; format shortg;
 PathRange = .01:.01:.05;
 TempRange = 300:50:1000;
 wavelengths = linspace(1,5,100)';
+Pressures = [0.98, 0.90, 0.80, 0.69, 0.59, 0.24, 0.50, 0.40, 0.30];
 
 % Enter database .mat file output name:
 SaveName = 'Database_2017_11_20.mat';

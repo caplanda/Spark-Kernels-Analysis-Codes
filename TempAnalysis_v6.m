@@ -3,11 +3,11 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'D:\Kernel IR Data\2017_12_18';
+testDir = 'D:\Kernel IR Data\2017_11_20';
 layoutFile = 'Layout.mat';
 REFspatialFile = 'SpatialCal_REF.txt';
 LOSspatialFile = 'SpatialCal_LOS.txt';
-tempdatabaseFile = 'Database_2017_11_20_highCO2.mat';
+tempdatabaseFile = 'Database_2017_11_20_MultiPressure.mat';
 
 noiseAvg = 0.034; %Average noise level
 noiseStd = 0.058; %Average noise standard deviation
@@ -234,7 +234,7 @@ for RedBaloons = 1:length(dataName)
         
         %     h = waitbar(0,'Looking up temperatures...');
         %     tic
-        
+        PressDex = find(Database.Pressures==KernData.Pressure); %Index for which interpolation surface to use
         for i = 1:KernData.EventCount
             for j = 1:KernData.EventFrames(i)
                 Tsum{i,j} = 0;
@@ -244,7 +244,9 @@ for RedBaloons = 1:length(dataName)
                     if sum(binLOS{i,j}(:,k)) ~= 0
                         for m = lostop{i,j}(k):losbot{i,j}(k)
                             if binLOS{i,j}(m,k) == 1
-                                temperature{i,j}(m,k) = griddata(intensity,PathLength,Temp,intLOS{i,j}(m,k),depth{i,j}(m,k));
+                                temperature{i,j}(m,k) = ...
+                                    griddata(Database.Int(PressDex).IntGrid, Database.Path, Database.Temp,...
+                                    intLOS{i,j}(m,k),depth{i,j}(m,k));
                                 if ~isnan(temperature{i,j}(m,k))
                                     Tsum{i,j} = Tsum{i,j} + temperature{i,j}(m,k);
                                 end

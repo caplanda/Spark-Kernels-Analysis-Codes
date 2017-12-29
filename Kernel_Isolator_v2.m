@@ -3,7 +3,7 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'J:\Kernel IR Data\2017_11_20';
+testDir = 'D:\Kernel IR Data\2017_12_18';
 
 camcalFile = 'CalLookup_INT0.08208_20171130.txt';
 TestSheetFile = 'TestMatrix.txt';
@@ -16,7 +16,7 @@ avenum = 500; %number of frames in the moving average
 stdnum = .1; %theshold number of standard deviations from the moving average
 % Voltage = 20; %Supply voltage to exciter
 % Pressure = 0.69; %Number of atmospheres
-testdate = '11/20/2017';
+testdate = '12/18/2017';
 
 
 Notes = {''};
@@ -27,19 +27,18 @@ datadir = [testDir,'\Datasets'];
 CamCal = dlmread([testDir, '\', camcalFile]);
 TestSheet = dlmread([testDir, '\', TestSheetFile]);
 
-% [dataName, dataPath] = uigetfile('*.mat',...
-%     'Select the .mat file containing the video',...
-%     [datadir, '\MatData']);
-
 
 %% Choose what to process:
 
-%Enter names of files to be processed
-% dataName = {'DP-000006_Int.mat'};
+% % %Enter names of files to be processed
+% [dataName, dataPath] = uigetfile('*.mat',...
+%     'Select the .mat file containing the video',...
+%     [datadir, '\MatData'], 'MultiSelect', 'on');
+% dataName = cellstr(dataName);
 
 %%%%%% OR %%%%%%%
 
-%Process all files in the folder
+% % Process all files in the folder
 dataName = cellstr(ls(datadir));
 dataName = dataName(3:end); %get rid of stupid dots added by ls
 
@@ -192,34 +191,34 @@ for RedBaloons = 1:length(dataName)
         
         %% Plot the kernels and save images
         
-%         % Kernel existance plot:
-%         fig1 = figure;
-%         plot(meanCounts, 'b'); hold on
-%         plot(cutoff,'r--');
-%         plot([1,length(meanCounts)], [PlasmaThresh PlasmaThresh], 'g:');
-%         title('Kernel Existance');
-%         xlabel('time (Frame number)');
-%         ylabel('Mean frame intensity');
-%         legend('Mean frame intensity', 'Kernel Threshold', 'Plasma Threshold');
-%         saveas(fig1, [figdir,'\Threshold_Plot.fig']);
-%         saveas(fig1, [DPdir,'\Threshold_Plot.tif']);
-%         
-%         % Intensity images:
-%         ncols = 5;
-%         colorange = [0, 5];
-%         for i = 1:eventcount
-%             nrows = ceil(eventframes(i)/ncols);
-%             fig = figure('Position', [25, 50, 1600, 300*nrows]);
-%             for j = 1:eventframes(i)
-%                 subplot(nrows,ncols,j)
-%                 imshow(KernInt{i,j},'Colormap', parula, 'DisplayRange', colorange);
-%             end
-%             eventname = sprintf('Event %d',i);
-%             title([testdate, ', ', DP,', ' eventname]);
-%             saveas(fig, [figdir,'\',eventname,'.fig']);
-%             saveas(fig, [DPdir,'\',eventname,'.png']);
-%         end
-%         close all
+        % Kernel existance plot:
+        fig1 = figure;
+        plot(meanCounts, 'b'); hold on
+        plot(cutoff,'r--');
+        plot([1,length(meanCounts)], [PlasmaThresh PlasmaThresh], 'g:');
+        title('Kernel Existance');
+        xlabel('time (Frame number)');
+        ylabel('Mean frame intensity');
+        legend('Mean frame intensity', 'Kernel Threshold', 'Plasma Threshold');
+        saveas(fig1, [figdir,'\Threshold_Plot.fig']);
+        saveas(fig1, [DPdir,'\Threshold_Plot.tif']);
+        
+        % Intensity images:
+        ncols = 5;
+        colorange = [0, 5];
+        for i = 1:eventcount
+            nrows = ceil(eventframes(i)/ncols);
+            fig = figure('Position', [25, 50, 1600, 300*nrows]);
+            for j = 1:eventframes(i)
+                subplot(nrows,ncols,j)
+                imshow(KernInt{i,j},'Colormap', parula, 'DisplayRange', colorange);
+            end
+            eventname = sprintf('Event %d',i);
+            title([testdate, ', ', num2str(Pressure), ' atm, ',DP,', ' eventname]);
+            saveas(fig, [figdir,'\',eventname,'.fig']);
+            saveas(fig, [DPdir,'\',eventname,'.png']);
+        end
+        close all
 
         %% Save data to file
         KernData.InputIsolator.CamCal = camcalFile;

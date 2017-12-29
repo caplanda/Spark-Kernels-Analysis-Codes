@@ -4,7 +4,7 @@ clear; clc; close all; format compact; format shortg;
 %% File Info:
 
 % testDir = 'C:\Users\caplanda\Kernel IR Data\2017_11_20';
-testDir = 'F:\Kernel IR Data\2017_11_20';
+testDir = 'J:\Kernel IR Data\2017_11_20';
 
 layoutFile = 'Layout.mat';
 camcalFile = 'CalLookup_INT0.08208_20171130.txt';
@@ -49,7 +49,8 @@ dataName = dataName(3:end); %get rid of stupid dots added by ls
 %     'Select the .mat file containing the video',...
 %     [datadir, '\MatData']);
 
-for k = 1:length(dataName)
+for k = 60:length(dataName)
+    k
     
     %Load reflected and line of sight data from the .mat file:
     dataMatFile = matfile([datadir,'\', dataName{k}]); %make data vars accessible
@@ -189,20 +190,40 @@ for k = 1:length(dataName)
     
     %% Plot the kernels
     ncols = 5;
-    colorange = [0, 100];
+    colorange = [0, 20];
     for i = 1:eventcount
         eventframes = sum(~cellfun(@isempty,losInt(i,:)),2); %(# kernel frames in each event)
-        nrows = ceil(eventframes/ncols);
-        fig = figure('Position', [25, 50, 1600, 300*nrows]);
-        for j = 1:eventframes
-            subplot(nrows,ncols,j)
-            imshow(losInt{i,j},'Colormap', parula, 'DisplayRange', colorange);
-        end
-        title([testdate, ', ', dataName{k}, ', Event ', num2str(i)]);
-        eventname = sprintf('Event_%d',i);
-        saveas(fig, [figdir,'\',eventname,'.fig']);
-        saveas(fig, [DPdir,'\',eventname,'.tif']);
+%         nrows = ceil(eventframes/ncols);
+%         fig = figure('Position', [25, 50, 1600, 300*nrows]);
+%         for j = 1:eventframes
+%             subplot(nrows,ncols,j)
+%             imshow(losInt{i,j},'Colormap', parula, 'DisplayRange', colorange);
+%         end
+%         title([testdate, ', ', dataName{k}, ', Event ', num2str(i)]);
+%         eventname = sprintf('Event_%d',i);
+%         saveas(fig, [figdir,'\',eventname,'.fig']);
+%         saveas(fig, [DPdir,'\',eventname,'.tif']);
     end
     close all
-    clear kerndex
+%     clear kerndex
+
+%% Search for embers, Sebastian style
+for i=1:eventcount
+%     for j = 1:eventframes
+        figure
+        subplot(1,2,1)
+        contourf(flipud(losInt{i,2}),25,'edgecolor','none')
+        axis equal
+        colorbar
+        colormap jet
+        caxis([0 20])                                                              %Manual Entry
+        title(sprintf('Event: %i',i))
+        subplot(1,2,2)
+        imshow(losInt{i,2},'Colormap', parula, 'DisplayRange', colorange);
+        colorbar
+        
+        pause
+        close all
+%     end
+end
 end

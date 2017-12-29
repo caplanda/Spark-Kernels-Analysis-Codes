@@ -3,11 +3,11 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'J:\Kernel IR Data\2017_11_20';
+testDir = 'D:\Kernel IR Data\2017_11_20';
 
 TempDataDir = [testDir,'\Temperature_Data'];
 
-colorange = [0, 3000];
+colorange = [0, 5000];
 
 
 
