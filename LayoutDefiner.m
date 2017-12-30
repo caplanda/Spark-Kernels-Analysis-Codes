@@ -10,7 +10,7 @@ clear; clc; close all;
 % testDir = '\\depot.engr.oregonstate.edu\users\caplanda\Windows.Documents\My Documents\CIRE Lab\Caplan\Data\Open Air Data\20170413 Igniter Test 1';
 % testDir = 'J:\Caplan\Kernel IR Data\2017_11_10';
 % testDir = 'C:\Users\Danny\Documents\ResearchIR Data\2017_11_10';
-testDir = 'J:\Kernel IR Data\2017_12_18';
+testDir = 'J:\Kernel IR Data\2017_12_19';
 
 %% Select and load file
 

@@ -3,17 +3,20 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'D:\Kernel IR Data\2017_12_18';
+testDir = 'J:\Kernel IR Data\2017_12_18';
 layoutFile = 'Layout.mat';
 REFspatialFile = 'SpatialCal_REF.txt';
 LOSspatialFile = 'SpatialCal_LOS.txt';
-tempdatabaseFile = 'Database_2017_11_20_highCO2.mat';
+tempdatabaseFile = 'Database_2017_12_18_MultiPressure.mat';
 
 noiseAvg = 0.034; %Average noise level
 noiseStd = 0.058; %Average noise standard deviation
 num_noiseStd = 4; %Threshold for kernel detection (num standard deviations above noise)
 artSize = 5; %Maximum artifact size (pixels) for noise reduction
 peakNum = 10; %Top ____ temps to be averaged to get the peak temp
+
+Notes = 'Background noise study not done. Needs to be reprocessed.';
+
 %% Load files
 
 IntDataDir = [testDir,'\Intensity_Data'];
@@ -45,7 +48,7 @@ RedBaloons = 99; LastError = 0; keepVars = 0;
 keepVars = who; %Non-loop variables protected from being cleared on each iteration
 tic
 for RedBaloons = 1:length(dataName)
-    try %Overall try-catch
+%     try %Overall try-catch
         load([IntDataDir,'\', dataName{RedBaloons}]);
         fprintf(['Oooh, ',KernData.DP,'!  Om nom nom... \n']);
         fprintf('Looks like there are %d events with up to %d frames.\n',KernData.EventCount,max(KernData.EventFrames));
@@ -278,6 +281,7 @@ for RedBaloons = 1:length(dataName)
         KernData.binLOS = binLOS;
         KernData.binREF = binREF;
         KernData.Volume = Volume;
+        KernData.Notes = Notes;
         
         save([TempDataDir,'\', dataName{RedBaloons}],'KernData');
         
@@ -324,11 +328,11 @@ for RedBaloons = 1:length(dataName)
         
         fprintf('\nThat was Tasty!\n\n\n');
         
-    catch Error_Overall %overall try-catch
-        fprintf(strcat('Analysis failed on:', dataName{RedBaloons}, ' with the following error:\n'));
-        LastError = Error_Overall
-        fprintf('Comment out the overall try-catch-end structure to get error line numbers...');
-    end %overall try-catch
+%     catch Error_Overall %overall try-catch
+%         fprintf(strcat('Analysis failed on:', dataName{RedBaloons}, ' with the following error:\n'));
+%         LastError = Error_Overall
+%         fprintf('Comment out the overall try-catch-end structure to get error line numbers...');
+%     end %overall try-catch
     clearvars('-except',keepVars{:}); %Clear all loop variables
     waitbar(RedBaloons/length(dataName))
 end

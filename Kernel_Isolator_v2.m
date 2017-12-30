@@ -3,7 +3,7 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'D:\Kernel IR Data\2017_12_18';
+testDir = 'J:\Kernel IR Data\2017_12_19';
 
 camcalFile = 'CalLookup_INT0.08208_20171130.txt';
 TestSheetFile = 'TestMatrix.txt';
@@ -16,7 +16,7 @@ avenum = 500; %number of frames in the moving average
 stdnum = .1; %theshold number of standard deviations from the moving average
 % Voltage = 20; %Supply voltage to exciter
 % Pressure = 0.69; %Number of atmospheres
-testdate = '12/18/2017';
+testdate = '12/19/2017';
 
 
 Notes = {''};

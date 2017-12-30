@@ -3,25 +3,32 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'D:\Kernel IR Data\2017_11_20';
+testDir = 'J:\Kernel IR Data\2017_12_19';
 layoutFile = 'Layout.mat';
 REFspatialFile = 'SpatialCal_REF.txt';
 LOSspatialFile = 'SpatialCal_LOS.txt';
-tempdatabaseFile = 'Database_2017_11_20_MultiPressure.mat';
+tempdatabaseFile = 'Database_2017_12_19_MultiPressure.mat';
 
 noiseAvg = 0.034; %Average noise level
 noiseStd = 0.058; %Average noise standard deviation
 num_noiseStd = 4; %Threshold for kernel detection (num standard deviations above noise)
 artSize = 5; %Maximum artifact size (pixels) for noise reduction
 peakNum = 10; %Top ____ temps to be averaged to get the peak temp
+
+Notes = 'Background noise study not done. Needs to be reprocessed';
+
 %% Load files
 
 IntDataDir = [testDir,'\Intensity_Data'];
 TempDataDir = [testDir,'\Temperature_Data'];
-if exist(TempDataDir) ~= 7
-    mkdir(TempDataDir);
-end
 
+try
+    if exist(TempDataDir) ~= 7
+        mkdir(TempDataDir);
+    end
+catch
+    fprintf('Check the test directory name...');
+end
 load([testDir, '\', tempdatabaseFile]);
 load([testDir, '\', layoutFile]);
 PixSizeREF = dlmread([testDir, '\', REFspatialFile]);
@@ -280,6 +287,7 @@ for RedBaloons = 1:length(dataName)
         KernData.binLOS = binLOS;
         KernData.binREF = binREF;
         KernData.Volume = Volume;
+        KernData.Notes = Notes;
         
         save([TempDataDir,'\', dataName{RedBaloons}],'KernData');
         
