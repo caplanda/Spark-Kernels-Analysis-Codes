@@ -3,19 +3,20 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'J:\Kernel IR Data\2017_12_19';
+testDir = 'E:\Kernel IR Data\2017_12_22a';
 layoutFile = 'Layout.mat';
 REFspatialFile = 'SpatialCal_REF.txt';
 LOSspatialFile = 'SpatialCal_LOS.txt';
-tempdatabaseFile = 'Database_2017_12_19_MultiPressure.mat';
+tempdatabaseFile = 'Database_2017_12_22_MultiPressure.mat';
+NoiseFile = 'Noise.mat';
 
-noiseAvg = 0.034; %Average noise level
-noiseStd = 0.058; %Average noise standard deviation
+% noiseAvg = 0.034; %Average noise level
+% noiseStd = 0.058; %Average noise standard deviation
 num_noiseStd = 4; %Threshold for kernel detection (num standard deviations above noise)
 artSize = 5; %Maximum artifact size (pixels) for noise reduction
 peakNum = 10; %Top ____ temps to be averaged to get the peak temp
 
-Notes = 'Background noise study not done. Needs to be reprocessed';
+Notes = '';
 
 %% Load files
 
@@ -31,17 +32,21 @@ catch
 end
 load([testDir, '\', tempdatabaseFile]);
 load([testDir, '\', layoutFile]);
+load([testDir,'\', NoiseFile]);
 PixSizeREF = dlmread([testDir, '\', REFspatialFile]);
 PixSizeLOS = dlmread([testDir, '\', LOSspatialFile]);
 
 %% Choose what to process:
 
-%Enter names of files to be processed
-% dataName = {'DP-000006_Int.mat'};
+% %Choose what to process using GUI:
+% [dataName, dataPath] = uigetfile('*.mat',...
+%     'Select the .mat file containing the video',...
+%     [IntDataDir, '\MatData'], 'MultiSelect', 'on');
+% dataName = cellstr(dataName);
 
 %%%%%% OR %%%%%%%
 
-%Process all files in the folder
+% %Process all files in the folder
 dataName = cellstr(ls(IntDataDir));
 dataName = dataName(3:end); %get rid of stupid dots added by ls
 
@@ -157,7 +162,7 @@ for RedBaloons = 1:length(dataName)
             end
         end
         
-        % Take care of any columns that do not correspond to a column in the other view
+        % Eliminate any columns that do not correspond to a column in the other view
         for i = 1:KernData.EventCount
             for j = 1:KernData.EventFrames(i)
                 for k = 1:sizeLOS(2)
@@ -170,7 +175,7 @@ for RedBaloons = 1:length(dataName)
             end
         end
         
-        % Find left and right edges and width of the los kernel after modification
+        % Find left and right edges of the los kernel (now same as ref)
         for i = 1:KernData.EventCount
             for j = 1:KernData.EventFrames(i)
                 kerncols = max(binLOS{i,j}, [], 1);
@@ -239,8 +244,8 @@ for RedBaloons = 1:length(dataName)
         
         %% Temperature Lookup
         
-        %     h = waitbar(0,'Looking up temperatures...');
-        %     tic
+%         %     h = waitbar(0,'Looking up temperatures...');
+%         %     tic
         PressDex = find(Database.Pressures==KernData.Pressure); %Index for which interpolation surface to use
         for i = 1:KernData.EventCount
             for j = 1:KernData.EventFrames(i)
@@ -266,8 +271,8 @@ for RedBaloons = 1:length(dataName)
             end
             %         waitbar(i/KernData.EventCount)
         end
-        %     toc
-        %     close(h)
+%         %     toc
+%         %     close(h)
         
         
         
@@ -287,13 +292,14 @@ for RedBaloons = 1:length(dataName)
         KernData.binLOS = binLOS;
         KernData.binREF = binREF;
         KernData.Volume = Volume;
+        KernData.IgTip = lostip;
         KernData.Notes = Notes;
         
         save([TempDataDir,'\', dataName{RedBaloons}],'KernData');
         
         
-%         %% plot a particular kernel
-%         i = 3;
+        %% plot a particular kernel
+%         i = 1;
 %         j = 1;
 %         
 %         close all;
@@ -304,33 +310,72 @@ for RedBaloons = 1:length(dataName)
 %         imshow(binLOS{i,j});
 %         
 %         
-%         fprintf('\nAfter %0.2f ms: \n',KernData.time{i,j});
-%         temps = temperature{i,j}(~isnan(temperature{i,j}(:)));
-%         sortedtemps = sort(temps, 'descend');
-%         PeakTemp = mean(sortedtemps(1:peakNum))
-%         MeanTemp = Tmean{i,j}
-%         
+% %         fprintf('\nAfter %0.2f ms: \n',KernData.time{i,j});
+% %         temps = temperature{i,j}(~isnan(temperature{i,j}(:)));
+% %         sortedtemps = sort(temps, 'descend');
+% %         PeakTemp = mean(sortedtemps(1:peakNum))
+% %         MeanTemp = Tmean{i,j}
+% 
+%         axesCol = leftedge{i,j} + 16;
+%         lineWidth = 6;
+%                 
 %         %Plot kernel and edge detection:
-%         intensitycolormaprange = [0, 100];
+%         intensitycolormaprange = [0, 25];
 %         figure
-%         subplot(2,2,1)
+%         
+%         subplot(2,4,1)
 %         imshow(intREF{i,j},'Colormap', parula, 'DisplayRange', intensitycolormaprange);
-%         title('Reflected');
-%         subplot(2,2,2)
+%         ylabel('Reflected');
+%         subplot(2,4,2)
 %         imshow(edgesREF{i,j}*1e6+intREF{i,j},'Colormap', parula, 'DisplayRange', intensitycolormaprange);
-%         subplot(2,2,3)
+%         
+%         subplot(2,4,5)
 %         imshow(intLOS{i,j},'Colormap', parula, 'DisplayRange', intensitycolormaprange);
-%         title('Line of sight');
-%         subplot(2,2,4)
+%         ylabel('Line of sight');
+%         subplot(2,4,6)
 %         imshow(edgesLOS{i,j}*1e6+intLOS{i,j},'Colormap', parula, 'DisplayRange', intensitycolormaprange);
 %         
-%         %Plot temperature:
-%         % temperaturecolormaprange = [min(temperature{eventnum,framenum}(:)), max(temperature{eventnum,framenum}(:))];
-%         temperaturecolormaprange = [min(Temp(:)), max(Temp(:))];
-%         figure
-%         imshow(temperature{i,j}, 'Colormap', hot, 'DisplayRange', temperaturecolormaprange);
-%         title('Temperature (K)');
-%         colorbar
+%         %kernel edge locations
+%         boundLOS = bwboundaries(binLOS{i,j});
+%         boundREF = bwboundaries(binREF{i,j});
+%         
+%         %Organize edges into a matrix
+%         edgeLOS = zeros(sizeLOS);
+%         for m = 1:size(boundLOS,1)
+%             for n = 1:size(boundLOS{m},1)
+%                 edgeLOS(boundLOS{m}(n,1), boundLOS{m}(n,2)) = 1;
+%             end
+%         end
+%         edgesLOS{i,j} = edgeLOS; %store in a cell structure
+%         
+%         edgeREF = zeros(sizeREF);
+%         for m = 1:size(boundREF,1)
+%             for n = 1:size(boundREF{m},1)
+%                 edgeREF(boundREF{m}(n,1), boundREF{m}(n,2)) = 1;
+%             end
+%         end
+%         edgesREF{i,j} = edgeREF;
+%         
+%         subplot(2,4,3)
+%         imshow(edgesREF{i,j}*1e6+intREF{i,j},'Colormap', parula, 'DisplayRange', intensitycolormaprange);
+%         subplot(2,4,4)
+%         imshow(edgesREF{i,j}*1e6+intREF{i,j},'Colormap', parula, 'DisplayRange', intensitycolormaprange); hold on
+%         plot([axesCol, axesCol], [refbot{i,j}(axesCol)+0.5, reftop{i,j}(axesCol)-0.5], 'r', 'LineWidth', lineWidth);
+%         
+%         subplot(2,4,7)
+%         imshow(edgesLOS{i,j}*1e6+intLOS{i,j},'Colormap', parula, 'DisplayRange', intensitycolormaprange);
+%         subplot(2,4,8)
+%         imshow(edgesLOS{i,j}*1e6+intLOS{i,j},'Colormap', parula, 'DisplayRange', intensitycolormaprange); hold on
+%         plot([axesCol, axesCol], [losbot{i,j}(axesCol)+0.5, lostop{i,j}(axesCol)-0.5], 'r', 'LineWidth', lineWidth);
+%         
+%         
+% %         %Plot temperature:
+% %         % temperaturecolormaprange = [min(temperature{eventnum,framenum}(:)), max(temperature{eventnum,framenum}(:))];
+% %         temperaturecolormaprange = [min(Temp(:)), max(Temp(:))];
+% %         figure
+% %         imshow(temperature{i,j}, 'Colormap', hot, 'DisplayRange', temperaturecolormaprange);
+% %         title('Temperature (K)');
+% %         colorbar
         
         fprintf('\nThat was Tasty!\n\n\n');
         

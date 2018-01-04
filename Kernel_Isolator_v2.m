@@ -3,7 +3,7 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'J:\Kernel IR Data\2017_12_19';
+testDir = 'C:\Users\caplanda\2017_12_22b';
 
 camcalFile = 'CalLookup_INT0.08208_20171130.txt';
 TestSheetFile = 'TestMatrix.txt';
@@ -14,9 +14,7 @@ nBG = 3; %number of background frames for each event
 PlasmaThresh = 3500; %mean first frame intensity threshold for plasma existence
 avenum = 500; %number of frames in the moving average
 stdnum = .1; %theshold number of standard deviations from the moving average
-% Voltage = 20; %Supply voltage to exciter
-% Pressure = 0.69; %Number of atmospheres
-testdate = '12/19/2017';
+
 
 
 Notes = {''};
@@ -27,10 +25,13 @@ datadir = [testDir,'\Datasets'];
 CamCal = dlmread([testDir, '\', camcalFile]);
 TestSheet = dlmread([testDir, '\', TestSheetFile]);
 
+slashes = regexp(testDir,'\');
+testdate = testDir(slashes(end)+1:end);
+
 
 %% Choose what to process:
 
-% % %Enter names of files to be processed
+% % %Choose what to process using GUI:
 % [dataName, dataPath] = uigetfile('*.mat',...
 %     'Select the .mat file containing the video',...
 %     [datadir, '\MatData'], 'MultiSelect', 'on');

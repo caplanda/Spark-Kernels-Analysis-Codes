@@ -9,10 +9,7 @@
 clear; clc; close all;
 
 %% User Inputs
-% testDir = 'C:\Users\caplanda\Kernel IR Data\20170420 Igniter Test 3\rotated';
-% testDir = 'C:\Users\Danny\Documents\ResearchIR Data\2017_11_17';
-% testDir = 'C:\Users\caplanda\Kernel IR Data\2017_11_20';
-testDir = 'J:\Kernel IR Data\2017_12_19';
+testDir = 'C:\Users\caplanda\2017_12_22b';
 
 
 %% Graphical file selector
