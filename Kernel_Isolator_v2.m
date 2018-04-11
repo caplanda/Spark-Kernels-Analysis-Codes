@@ -189,7 +189,6 @@ for RedBaloons = 1:length(dataName)
                 framenum{i,j} = j;
             end
         end
-        
         %% Plot the kernels and save images
         
         % Kernel existance plot:
