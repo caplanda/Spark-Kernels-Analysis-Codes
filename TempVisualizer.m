@@ -3,7 +3,7 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'D:\Kernel IR Data\2017_11_20';
+testDir = 'G:\Kernel IR Data\2017_12_19';
 
 TempDataDir = [testDir,'\Temperature_Data'];
 

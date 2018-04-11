@@ -7,7 +7,7 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'E:\Kernel IR Data\2017_11_20';
+testDir = '\\depot.engr.oregonstate.edu\users\caplanda\Windows.Documents\My Documents\CIRE Lab\Caplan\Data\Okhovat Discrepancy\2std_CO2_000625_H2O_01';
 
 TempDataDir = [testDir,'\Temperature_Data'];
 

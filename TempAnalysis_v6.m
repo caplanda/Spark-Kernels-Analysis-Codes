@@ -3,16 +3,16 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'E:\Kernel IR Data\2017_12_22a';
+testDir = 'J:\Kernel IR Data\1_26_2018 HeatGun';
 layoutFile = 'Layout.mat';
 REFspatialFile = 'SpatialCal_REF.txt';
 LOSspatialFile = 'SpatialCal_LOS.txt';
-tempdatabaseFile = 'Database_2017_12_22_MultiPressure.mat';
+tempdatabaseFile = 'Database_2017_12_19_MultiPressure.mat';
 NoiseFile = 'Noise.mat';
 
 % noiseAvg = 0.034; %Average noise level
 % noiseStd = 0.058; %Average noise standard deviation
-num_noiseStd = 4; %Threshold for kernel detection (num standard deviations above noise)
+num_noiseStd = 2; %Threshold for kernel detection (num standard deviations above noise)
 artSize = 5; %Maximum artifact size (pixels) for noise reduction
 peakNum = 10; %Top ____ temps to be averaged to get the peak temp
 
@@ -32,7 +32,7 @@ catch
 end
 load([testDir, '\', tempdatabaseFile]);
 load([testDir, '\', layoutFile]);
-load([testDir,'\', NoiseFile]);
+% load([testDir,'\', NoiseFile]);
 PixSizeREF = dlmread([testDir, '\', REFspatialFile]);
 PixSizeLOS = dlmread([testDir, '\', LOSspatialFile]);
 
@@ -57,7 +57,7 @@ RedBaloons = 99; LastError = 0; keepVars = 0;
 keepVars = who; %Non-loop variables protected from being cleared on each iteration
 tic
 for RedBaloons = 1:length(dataName)
-    try %Overall try-catch
+%     try %Overall try-catch
         load([IntDataDir,'\', dataName{RedBaloons}]);
         fprintf(['Oooh, ',KernData.DP,'!  Om nom nom... \n']);
         fprintf('Looks like there are %d events with up to %d frames.\n',KernData.EventCount,max(KernData.EventFrames));
@@ -77,16 +77,18 @@ for RedBaloons = 1:length(dataName)
         % Simple binary theshold method
         
         
-        binThresh = noiseAvg + num_noiseStd*noiseStd;
+%         binThresh = noiseAvg + num_noiseStd*noiseStd;
+%         binThresh = 0.1; % Sebastian Assumption
+        binThresh = 82;
         
-        % Kernel event and frame to test the code on:
+        % 
         for i = 1:KernData.EventCount
             for j = 1:KernData.EventFrames(i)
                 
                 %Binarize:
                 binLOS{i,j} = intLOS{i,j} > binThresh;
                 binLOS{i,j}(:,lostip(2)-1:end) = 0; %Exclude pixels from the igniter tip and over
-                binREF{i,j} = intREF{i,j} > binThresh/0.85; %0.85 because of reflection losses
+                binREF{i,j} = intREF{i,j} > binThresh;%/0.85; %0.85 because of reflection losses
                 binREF{i,j}(:,reftip(2)-1:end) = 0;
                 
                 %Remove artifacts:
@@ -105,8 +107,8 @@ for RedBaloons = 1:length(dataName)
                 end
                 
                 %Remove edge reflections
-                binLOS{i,j} = imclearborder(binLOS{i,j},4);
-                binREF{i,j} = imclearborder(binREF{i,j},4);
+%                 binLOS{i,j} = imclearborder(binLOS{i,j},4);
+%                 binREF{i,j} = imclearborder(binREF{i,j},4);
                 
                 %kernel edge locations
                 boundLOS = bwboundaries(binLOS{i,j});
@@ -249,6 +251,7 @@ for RedBaloons = 1:length(dataName)
         PressDex = find(Database.Pressures==KernData.Pressure); %Index for which interpolation surface to use
         for i = 1:KernData.EventCount
             for j = 1:KernData.EventFrames(i)
+                j
                 Tsum{i,j} = 0;
                 Tcount{i,j} = 0;
                 temperature{i,j} = NaN(sizeLOS);
@@ -256,9 +259,12 @@ for RedBaloons = 1:length(dataName)
                     if sum(binLOS{i,j}(:,k)) ~= 0
                         for m = lostop{i,j}(k):losbot{i,j}(k)
                             if binLOS{i,j}(m,k) == 1
+                                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REMOVE /10 !!!!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+                                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+                                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
                                 temperature{i,j}(m,k) = ...
                                     griddata(Database.Int(PressDex).IntGrid, Database.Path, Database.Temp,...
-                                    intLOS{i,j}(m,k),depth{i,j}(m,k));
+                                    intLOS{i,j}(m,k)/10,depth{i,j}(m,k));
                                 if ~isnan(temperature{i,j}(m,k))
                                     Tsum{i,j} = Tsum{i,j} + temperature{i,j}(m,k);
                                 end
@@ -279,9 +285,9 @@ for RedBaloons = 1:length(dataName)
         %% Save temperature data to the existing kernel data file
         
         KernData.InputTemp.Database = tempdatabaseFile;
-        KernData.InputTemp.noiseAvg = noiseAvg;
-        KernData.InputTemp.noiseStd = noiseStd;
-        KernData.InputTemp.num_noiseStd = num_noiseStd;
+%         KernData.InputTemp.noiseAvg = noiseAvg;
+%         KernData.InputTemp.noiseStd = noiseStd;
+%         KernData.InputTemp.num_noiseStd = num_noiseStd;
         KernData.InputTemp.artSize = artSize;
         KernData.temperature = temperature;
         KernData.Tmean = Tmean;
@@ -379,13 +385,13 @@ for RedBaloons = 1:length(dataName)
         
         fprintf('\nThat was Tasty!\n\n\n');
         
-    catch Error_Overall %overall try-catch
-        fprintf(strcat('Analysis failed on:', dataName{RedBaloons}, ' with the following error:\n'));
-        LastError = Error_Overall
-        fprintf('Comment out the overall try-catch-end structure to get error line numbers...');
-    end %overall try-catch
-    clearvars('-except',keepVars{:}); %Clear all loop variables
-    waitbar(RedBaloons/length(dataName))
+%     catch Error_Overall %overall try-catch
+%         fprintf(strcat('Analysis failed on:', dataName{RedBaloons}, ' with the following error:\n'));
+%         LastError = Error_Overall
+%         fprintf('Comment out the overall try-catch-end structure to get error line numbers...');
+%     end %overall try-catch
+%     clearvars('-except',keepVars{:}); %Clear all loop variables
+%     waitbar(RedBaloons/length(dataName))
 end
 
 close(h)

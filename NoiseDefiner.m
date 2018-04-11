@@ -2,7 +2,7 @@
 
 clear; clc; close all;
 
-testDir = 'C:\Users\caplanda\2017_12_22b';
+testDir = 'E:\Kernel IR Data\2017_12_19';
 BoxFile = 'NoiseBox.mat';
 
 %% Load files

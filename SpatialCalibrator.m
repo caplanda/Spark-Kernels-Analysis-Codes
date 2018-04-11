@@ -9,7 +9,7 @@
 clear; clc; close all;
 
 %% User Inputs
-testDir = 'C:\Users\caplanda\2017_12_22b';
+testDir = 'J:\Kernel IR Data\1_26_2018 HeatGun';
 
 
 %% Graphical file selector

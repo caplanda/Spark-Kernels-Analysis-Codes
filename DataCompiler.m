@@ -4,7 +4,7 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'J:\Kernel IR Data\2017_11_20';
+testDir = 'J:\Kernel IR Data\1_26_2018 HeatGun';
 
 TempDataDir = [testDir,'\Temperature_Data'];
 

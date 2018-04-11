@@ -4,7 +4,7 @@ clear; clc; close all; format compact; format shortg;
 
 %% User Defined Values
 
-testDir = 'J:\Kernel IR Data\2017_11_20';
+testDir = 'E:\Kernel IR Data\2017_11_20';
 
 DataDir = [testDir,'\Temperature_Data'];
 colorange = [0, 15];
@@ -13,7 +13,7 @@ map = parula;
 % map = hot;
 
 crop = [10, 50, 56, 79]; %[upperleftx, upperlefty, lowerrightx, lowerrighty]
-EventNumber = 3;
+EventNumber = 2;
 spacing = 2; %pixel spacing between images
 
 NumImgs = 4; %number of stacked images
@@ -54,7 +54,6 @@ h = colorbar;
 y = 1 + ImgH;
 for j = 1:NumImgs-1
     rectangle('Position', [0,y,ImageW+1,spacing], 'FaceColor', 'w');
-    
     y = y + ImgH + spacing;
 end
 
@@ -64,12 +63,12 @@ for j = 1:NumImgs
         a = text(StrStrt,y+ImgH/2, '', 'FontSize',12, 'Color','k');
         %         a.String = strcat('t = ',KernData.time{j},'ms');
         a.String = sprintf('t = %0.2f ms',KernData.time{EventNumber,j});
-            y = y + ImgH + spacing;
+        y = y + ImgH + spacing;
     catch
     end
 end
 
-title('0.5 atm');
+title('1.0 atm');
 ylabel(h, 'W/m^2-sr');
 % set(get(h,'title'),'string','W/m^2-sr');
 
